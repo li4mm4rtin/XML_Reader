@@ -24,12 +24,19 @@ def stringConvert(AD, PS):
     v1_length = round((math.sqrt(math.pow(v1[0], 2) + math.pow(v1[1], 2)) * PS)/10, 2)
     v2_length = round((math.sqrt(math.pow(v2[0], 2) + math.pow(v2[1], 2)) * PS)/10, 2)
 
+    if v1_length < v2_length:
+        print('MARK')
+        temp = v2_length
+        v2_length = v1_length
+        v1_length = temp
+
     return incAngle, v1_length, v2_length
 
 
-excelData = pd.read_excel('/Users/liammartin/Downloads/Project1/PB_Angle.xlsx')
+excelData = pd.read_excel('/Users/liammartin/Downloads/Data_excel/PB_Angle.xlsx')
 
-path = r"/Users/liammartin/Downloads/Project1/*.xml"
+path = r"/Users/liammartin/Downloads/Evacuation/*.xml"
+studyName = "_Evacuation"
 files = glob.glob(path)
 path = os.path.dirname(files[0])
 
@@ -46,7 +53,7 @@ for j, filename in enumerate(files):
     with open(os.path.join(path, filename), 'r') as f:
         data = f.read()
 
-    Bs_data = BeautifulSoup(data, "xml")
+    Bs_data = BeautifulSoup(data, "lxml")
     angleData = Bs_data.find_all('array')[1].find_all('string')
 
     pixelSpacing = excelData["pixelSpacing"][j]
@@ -60,9 +67,9 @@ for j, filename in enumerate(files):
 
     print(angle, v1L, v2L, filename)
 
-excelData["PB_Angle"] = angles
-excelData["PCL"] = PCL
-excelData["PS_PB"] = PBL
-excelData["Read Study ID"] = filenames
+excelData["PB_Angle"+studyName] = angles
+excelData["PCL"+studyName] = PCL
+excelData["PS_PB"+studyName] = PBL
+excelData["Read Study ID"+studyName] = filenames
 
-excelData.to_excel("./output2.xlsx")
+excelData.to_excel("./output" + studyName + ".xlsx",)
